@@ -24,7 +24,7 @@ router.get("/Search", (req, res) => {
     });
 });
 
-router.get("/Search", (req, res) => {
+router.get("/Search111", (req, res) => {
     connection.query("SELECT * FROM CATEGORY", (err, records,fields) => {
         if (err) {
             console.error("Error getting category!", err);
