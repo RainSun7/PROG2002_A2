@@ -34,7 +34,7 @@ router.get("/Search", (req, res) => {
     });
 });
 
-router.get("/fundraiser", (req, res) => {
+router.get("/fundraiser/:id", (req, res) => {
     const fundraiserId = req.params.id;
     connection.query("SELECT * FROM FUNDRAISER WHERE id = ?", [fundraiserId], (err, records) => {
         if (err) {
