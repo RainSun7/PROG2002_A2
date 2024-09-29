@@ -4,7 +4,7 @@ var connection = dbcon.getconnection();
 var express = require('express');
 var router = express.Router();
 
-router.get("/Home", (req, res)=>{
+router.get("/AllFundraiser", (req, res)=>{
 	connection.query("SELECT * FROM FUNDRAISER WHERE active = 1", (err, records,fields)=> {
 		 if (err){
 			 console.error("Error getting fundraiser!");
@@ -14,7 +14,7 @@ router.get("/Home", (req, res)=>{
 	})
 })
 
-router.get("/Search", (req, res) => {
+router.get("/AllCategory", (req, res) => {
     connection.query("SELECT * FROM CATEGORY", (err, records,fields) => {
         if (err) {
             console.error("Error getting category!", err);
@@ -24,19 +24,28 @@ router.get("/Search", (req, res) => {
     });
 });
 
-router.get("/Search111", (req, res) => {
-    connection.query("SELECT * FROM CATEGORY", (err, records,fields) => {
+router.get("/SearchCondition", (req, res) => {
+    const { CATEGORY, ACTIVE } = req.query;
+    const params = [];
+    let query = "SELECT * FROM FUNDRAISER WHERE 1=1";
+    if (CATEGORY) {
+        query += " AND CATEGORY_ID = ?";
+        params.push(CATEGORY);
+    }
+    if (ACTIVE) {
+        query += " AND ACTIVE = ?";
+        params.push(ACTIVE === 'true' ? '1' : '0');
+    }
+    connection.query(query, params, (err, records) => {
         if (err) {
-            console.error("Error getting category!", err);
-        } else {
-            res.send(records);
+            console.error("Error getting fundraiser info!", err);
         }
+        res.send(records);
     });
 });
 
-router.get("/fundraiser/:id", (req, res) => {
-    const fundraiserId = req.params.id;
-    connection.query("SELECT * FROM FUNDRAISER WHERE id = ?", [fundraiserId], (err, records) => {
+router.get("/SearchFundraiser/:id", (req, res) => {
+    connection.query("select * from FUNDRAISER where FUNDRAISER_ID=" + req.params.id, (err, records,fields)=> {
         if (err) {
             console.error("Error Getting fundraiser info!", err);
         } else {

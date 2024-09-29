@@ -1,45 +1,112 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <title>Main page</title>
-</head>
-<body>
-    CONVENTION CENTRE XYZ<br>
-
-    <h1>Welcome page</h1>
-
-    <span>Home</span> | <a href="Search.html"><span>Search</span></a> | <a href="Fundraisers.html"><span>Fundraisers</span></a>
-
+  <head>
+      <title>Help Each Other</title>
+  </head>
+  
+  <body>
+    <nav>
+      <a href="Home.html">Home</a>  | 
+      <a href="Search.html">Search</a> | 
+      <a href="Fundraisers.html">Fundraisers</a>
+    </nav>
+    <header>
+          <h1>Welcome to our charity donations website</h1>
+          <p>We are committed to helping those in need, and every donation can change lives. </p>
+    </header>
     <div id="data"></div>
-</body>
+    <h1>The world needs more heroes!</h1>
+  </body>
+
+  <style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f9f9f9;
+    }
+
+    header {
+        background-color: #31c8c8;
+        color: white;
+        padding: 10px;
+        text-align: center;
+        border-radius: 5px;
+    }
+
+    h1 {
+        background-color: #31c8c8;
+        color: white;
+        padding: 10px;
+        text-align: center;
+        border-radius: 5px;
+    }
+
+    nav {
+        background-color: #ffffff;
+        padding: 5px;
+        border-radius: 5px;
+        text-align: right;
+    }
+
+    nav span, nav a {
+        margin: 0 10px;
+        text-decoration: none;
+        color: #333;
+    }
+
+    nav a:hover {
+        text-decoration: underline;
+    }
+
+    #data {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px; 
+        margin-top: 10px;
+    }
+
+    .fundraiser-box {
+        background: white;
+        padding: 15px;
+        width: calc(33.33% - 20px); 
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        box-sizing: border-box; 
+    }
+  </style>
 </html>
 
 <script>
-    fetch("http://localhost:3060/Home")
+  fetch("http://localhost:3060/AllFundraiser")
       .then(response => response.json())
       .then(data => {
-        const dataDiv = document.getElementById('data');
-        dataDiv.innerHTML = "";
+          const dataDiv = document.getElementById('data');
+          dataDiv.innerHTML = "";
 
-        if (data.length > 0) {
-          data.forEach(fundraiser => {
-              const newP = document.createElement("p");
-              newP.textContent = `FUNDRAISER_ID: ${fundraiser.FUNDRAISER_ID}, 
-                                  ORGANIZER: ${fundraiser.ORGANIZER}, 
-                                  CAPTION: ${fundraiser.CAPTION}, 
-                                  TARGET_FUNDING: ${fundraiser.TARGET_FUNDING}, 
-                                  CURRENT_FUNDING: ${fundraiser.CURRENT_FUNDING}, 
-                                  CITY: ${fundraiser.CITY}, 
-                                  ACTIVE: ${fundraiser.ACTIVE},
-                                  CATEGORY_ID: ${fundraiser.CATEGORY_ID}`;
-              dataDiv.appendChild(newP);
-          });
-        } else {
-          dataDiv.textContent = "No fundraiser data";
-        }
+          if (data.length > 0) {
+              data.forEach(fundraiser => {
+                  const boxDiv = document.createElement("div");
+                  boxDiv.classList.add("fundraiser-box");
+
+                  boxDiv.innerHTML = `
+                      <p><strong>Fundraiser ID:</strong> ${fundraiser.FUNDRAISER_ID}</p>
+                      <p><strong>Organizer:</strong> ${fundraiser.ORGANIZER}</p>
+                      <p><strong>Caption:</strong> ${fundraiser.CAPTION}</p>
+                      <p><strong>Target Funding:</strong> ${fundraiser.TARGET_FUNDING} </p>
+                      <p><strong>Current Funding:</strong> ${fundraiser.CURRENT_FUNDING} </p>
+                      <p><strong>City:</strong> ${fundraiser.CITY}</p>
+                      <p><strong>Active:</strong> ${fundraiser.ACTIVE}</p>
+                      <p><strong>Category ID:</strong> ${fundraiser.CATEGORY_ID}</p>
+                  `;
+                  
+                  dataDiv.appendChild(boxDiv);
+              });
+          } else {
+              dataDiv.textContent = "No fundraiser data";
+          }
       })
       .catch(error => {
-        console.error("Error fetching data", error);
-        document.getElementById('data').textContent = "Failed to load data";
+          console.error("Error fetching data", error);
+          document.getElementById('data').textContent = "Failed to load data";
       });
 </script>
