@@ -39,7 +39,7 @@
         </div>
     
         <div class="button">
-            <button type="button" onclick="search()">search</button>
+            <button type="button" onclick="search()">Search</button>
             <button type="button" onclick="clearCheckboxes()">Clear</button>
         </div>
     </form>
@@ -96,6 +96,8 @@
         border-radius: 5px;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         box-sizing: border-box; 
+        margin: auto;
+        text-align: center;
     }
 
     .form {
@@ -151,6 +153,9 @@
                             <p>Active: ${fundraiser.ACTIVE}</p>
                             <p>Category ID: ${fundraiser.CATEGORY_ID}</p>
                         `;
+                        const newP2=document.createElement("p");
+                        newP2.innerHTML="<a href='http://localhost:8080/fundraisers?' onclick='FUNDRAISER_ID("+fundraiser.FUNDRAISER_ID+");'>More</a>";
+                        dataDiv.appendChild(newP2);
                   
                         dataDiv.appendChild(boxDiv);
                         
