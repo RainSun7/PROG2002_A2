@@ -25,16 +25,24 @@ router.get("/AllCategory", (req, res) => {
 });
 
 router.get("/SearchCondition", (req, res) => {
-    const { CATEGORY, ACTIVE } = req.query;
+    const { ORGANIZER,CITY,CATEGORY, ACTIVE } = req.query;
     const params = [];
     let query = "SELECT * FROM FUNDRAISER WHERE 1=1";
+    if (ORGANIZER) {
+        query += " AND ORGANIZER = ?";  
+        params.push(ORGANIZER); 
+    }
+    if (CITY) {
+        query += " AND CITY = ?";  
+        params.push(CITY); 
+    }
     if (CATEGORY) {
         query += " AND CATEGORY_ID = ?";
         params.push(CATEGORY);
     }
     if (ACTIVE) {
         query += " AND ACTIVE = ?";
-        params.push(ACTIVE === 'true' ? '1' : '0');
+        params.push(ACTIVE === '1' ? '1' : '0');
     }
     connection.query(query, params, (err, records) => {
         if (err) {

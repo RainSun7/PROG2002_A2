@@ -15,23 +15,38 @@
     </header>
 
     <form id="searchForm">
-        <h3>Select a category：</h3>
-        <select id="categorySelect" required>
-            <option value="">Category</option>
-            <option value="1">Humanities</option>
-            <option value="2">Nature</option>
-            <option value="3">Scienc</option>
-        </select>
+        <div class="form">
+            <h3>Organizer:</h3>
+            <input type="text" id="organizer" placeholder="Enter Name" required> 
 
-        <h3>Active Status：</h3>
-        <label><input type="checkbox" id="activeCheckbox" value="true"> Active</label><br>
-        <label><input type="checkbox" id="activeCheckbox" value="true"> Inactive</label><br>
+            <h3>City:</h3>
+            <input type="text" id="city" placeholder="Enter City" required> 
 
-        <button type="button" onclick="search()">search</button>
-        <button type="button" onclick="clearCheckboxes()">Clear</button>
+            <h3>Select a category：</h3>
+            <select id="category" required>
+                <option value="">Category</option>
+                <option value="1">Humanities</option>
+                <option value="2">Nature</option>
+                <option value="3">Scienc</option>
+            </select>
+
+            <h3>Active Status：</h3>
+            <select id="active" required>
+                <option value="">Status</option>
+                <option value="1">Active</option>
+                <option value="2">Inactive</option>
+            </select>
+        </div>
+    
+        <div class="button">
+            <button type="button" onclick="search()">search</button>
+            <button type="button" onclick="clearCheckboxes()">Clear</button>
+        </div>
     </form>
 
     <div id="data"></div>
+
+    <footer>The world needs more heroes!</footer>
   </body>
 
   <style>
@@ -82,12 +97,40 @@
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         box-sizing: border-box; 
     }
+
+    .form {
+        display: flex;    
+        margin-top: 30px;       
+        justify-content: center; 
+        gap: 20px;              
+    }
+
+    h3 {
+        margin: 0 2px;
+    }
+
+    .button {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    footer {
+        position: fixed;
+        background-color: #31c8c8;
+        bottom: 0; 
+        color: white;
+        padding: 10px;
+        text-align: center;
+        border-radius: 5px; 
+        width: 100%;
+    }
+    
   </style>
 </html>
 
 <script>
-    function searchByConditions(category, isActive) {
-        const url = `http://localhost:3060/SearchCondition?CATEGORY=${category}&ACTIVE=${isActive}`;
+    function searchByConditions(organizer, city, category, active) {
+        const url = `http://localhost:3060/SearchCondition?ORGANIZER=${organizer}&CITY=${city}&CATEGORY=${category}&ACTIVE=${active}`;
         fetch(url)
             .then(response => response.json())
             .then(data => {
@@ -99,21 +142,25 @@
                         const boxDiv = document.createElement("div");
                         boxDiv.classList.add("fundraiser-box");
                         boxDiv.innerHTML = `
-                            <p><strong>Fundraiser ID:</strong> ${fundraiser.FUNDRAISER_ID}</p>
-                            <p><strong>Organizer:</strong> ${fundraiser.ORGANIZER}</p>
-                            <p><strong>Caption:</strong> ${fundraiser.CAPTION}</p>
-                            <p><strong>Target Funding:</strong> ${fundraiser.TARGET_FUNDING} </p>
-                            <p><strong>Current Funding:</strong> ${fundraiser.CURRENT_FUNDING} </p>
-                            <p><strong>City:</strong> ${fundraiser.CITY}</p>
-                            <p><strong>Active:</strong> ${fundraiser.ACTIVE}</p>
-                            <p><strong>Category ID:</strong> ${fundraiser.CATEGORY_ID}</p>
+                            <p>Fundraiser ID: ${fundraiser.FUNDRAISER_ID}</p>
+                            <p>Organizer: ${fundraiser.ORGANIZER}</p>
+                            <p>Caption: ${fundraiser.CAPTION}</p>
+                            <p>Target Funding: ${fundraiser.TARGET_FUNDING} </p>
+                            <p>Current Funding: ${fundraiser.CURRENT_FUNDING} </p>
+                            <p>City: ${fundraiser.CITY}</p>
+                            <p>Active: ${fundraiser.ACTIVE}</p>
+                            <p>Category ID: ${fundraiser.CATEGORY_ID}</p>
                         `;
                   
                         dataDiv.appendChild(boxDiv);
                         
                     });
                 } else {
-                    dataDiv.textContent = "No fundraiser data";
+                    const newP = document.createElement("p");
+                    newP.textContent = "No fundraisers are found";
+                    newP.style.color = "rgb(231, 10, 10)"; 
+                    newP.style.fontWeight = "bold"; 
+                    dataDiv.appendChild(newP);
                 }
             })
             .catch(error => {
@@ -123,20 +170,24 @@
     }
 
     function search() {
-        const category = document.getElementById('categorySelect').value;
-        const isActive = document.getElementById('activeCheckbox').checked;
+        const organizer = document.getElementById('organizer').value;
+        const city = document.getElementById('city').value;
+        const category = document.getElementById('category').value;
+        const active = document.getElementById('active').value;
 
-        if (!category) {
-            alert("Please select at least one category!");
-            return;
-        }
+        if (!organizer && !city && !category && !active) {
+        alert("Please select at least one condition to search!");
+        return;
+    }
 
-        searchByConditions(category, isActive);
+        searchByConditions(organizer, city, category, active);
     }
 
     function clearCheckboxes() {
-        document.getElementById('categorySelect').selectedIndex = 0; 
-        document.getElementById('activeCheckbox').checked = false; 
+        document.getElementById('organizer').value = "";
+        document.getElementById('city').value = "";
+        document.getElementById('category').selectedIndex = 0; 
+        document.getElementById('active').selectedIndex = 0; 
         document.getElementById('data').innerHTML = ""; 
     }
 </script>
