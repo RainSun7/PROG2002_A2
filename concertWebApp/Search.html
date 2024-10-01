@@ -37,7 +37,7 @@
                 <option value="2">Inactive</option>
             </select>
         </div>
-    
+        
         <div class="button">
             <button type="button" onclick="search()">Search</button>
             <button type="button" onclick="clearCheckboxes()">Clear</button>
@@ -99,6 +99,23 @@
         margin: auto;
         text-align: center;
     }
+    .fundraiser-box img {
+        max-width: 100%;
+        border-radius: 5px;
+        margin: 10px 0px; 
+    }
+
+    .errorDiv {
+        background: white;
+        color: rgb(249, 0, 0);
+        padding: 15px;
+        width: calc(33.33% - 20px);
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        box-sizing: border-box;
+        margin: auto;
+        text-align: center;
+    }
 
     .form {
         display: flex;    
@@ -126,48 +143,45 @@
         border-radius: 5px; 
         width: 100%;
     }
+
     
   </style>
 </html>
 
 <script>
     function searchByConditions(organizer, city, category, active) {
-        const url = `http://localhost:3060/SearchCondition?ORGANIZER=${organizer}&CITY=${city}&CATEGORY=${category}&ACTIVE=${active}`;
+        const url = `http://localhost:3060/SearchCondition?ORGANIZER=${organizer}&CITY=${city}&CATEGORY_ID=${category}&ACTIVE=${active}`;
         fetch(url)
             .then(response => response.json())
             .then(data => {
                 const dataDiv = document.getElementById('data');
-                dataDiv.innerHTML = "";
-
+                dataDiv.innerHTML = ""; 
                 if (data.length > 0) {
                     data.forEach(fundraiser => {
                         const boxDiv = document.createElement("div");
+                        const image = `image${fundraiser.FUNDRAISER_ID}.png`;
                         boxDiv.classList.add("fundraiser-box");
                         boxDiv.innerHTML = `
                             <p>Fundraiser ID: ${fundraiser.FUNDRAISER_ID}</p>
                             <p>Organizer: ${fundraiser.ORGANIZER}</p>
                             <p>Caption: ${fundraiser.CAPTION}</p>
-                            <p>Target Funding: ${fundraiser.TARGET_FUNDING} </p>
-                            <p>Current Funding: ${fundraiser.CURRENT_FUNDING} </p>
+                            <p>Target Funding: ${fundraiser.TARGET_FUNDING}</p>
+                            <p>Current Funding: ${fundraiser.CURRENT_FUNDING}</p>
                             <p>City: ${fundraiser.CITY}</p>
-                            <p>Active: ${fundraiser.ACTIVE}</p>
-                            <p>Category ID: ${fundraiser.CATEGORY_ID}</p>
+                            <p>Active: ${fundraiser.ACTIVE ? 'Yes' : 'No'}</p> 
+                            <p>Category: ${fundraiser.CATEGORY_NAME}</p>
+                            <img src="${image}" alt="Fundraiser Image for ${fundraiser.FUNDRAISER_ID}" />
                         `;
                         const newP2 = document.createElement("p");
                         newP2.innerHTML = `<a href='/Fundraisers?id=${fundraiser.FUNDRAISER_ID}'>More</a>`;
-                        dataDiv.appendChild(newP2);
-
-
-                  
+                        boxDiv.appendChild(newP2);
                         dataDiv.appendChild(boxDiv);
-                        
                     });
                 } else {
-                    const newP = document.createElement("p");
-                    newP.textContent = "No fundraisers are found";
-                    newP.style.color = "rgb(231, 10, 10)"; 
-                    newP.style.fontWeight = "bold"; 
-                    dataDiv.appendChild(newP);
+                    const errorDiv = document.createElement("div");
+                    errorDiv.classList.add("errorDiv");
+                    errorDiv.textContent = "No fundraisers are found";
+                    dataDiv.appendChild(errorDiv);
                 }
             })
             .catch(error => {
@@ -183,9 +197,9 @@
         const active = document.getElementById('active').value;
 
         if (!organizer && !city && !category && !active) {
-        alert("Please select at least one condition to search!");
-        return;
-    }
+            alert("Please select at least one condition to search!");
+            return;
+        }
 
         searchByConditions(organizer, city, category, active);
     }
@@ -194,7 +208,8 @@
         document.getElementById('organizer').value = "";
         document.getElementById('city').value = "";
         document.getElementById('category').selectedIndex = 0; 
-        document.getElementById('active').selectedIndex = 0; 
+        document.getElementById('active').selectedIndex = 0;  
         document.getElementById('data').innerHTML = ""; 
     }
+
 </script>

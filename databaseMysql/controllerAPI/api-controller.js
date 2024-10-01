@@ -4,15 +4,21 @@ var connection = dbcon.getconnection();
 var express = require('express');
 var router = express.Router();
 
-router.get("/AllFundraiser", (req, res)=>{
-	connection.query("SELECT * FROM FUNDRAISER WHERE active = 1", (err, records,fields)=> {
-		 if (err){
-			 console.error("Error getting fundraiser!");
-		 }else{
-			 res.send(records);
-		 }
-	})
-})
+router.get("/AllFundraiser", (req, res) => {
+	connection.query(`
+		SELECT f.FUNDRAISER_ID, f.ORGANIZER, f.CAPTION, f.TARGET_FUNDING, f.CURRENT_FUNDING, f.CITY, f.ACTIVE, c.NAME as CATEGORY_NAME 
+		FROM FUNDRAISER f
+		JOIN CATEGORY c ON f.CATEGORY_ID = c.CATEGORY_ID
+		WHERE f.ACTIVE = 1
+	`, (err, records, fields) => {
+		if (err) {
+			console.error("Error getting fundraiser!");
+		} else {
+			res.send(records);
+		}
+	});
+});
+
 
 router.get("/AllCategory", (req, res) => {
     connection.query("SELECT * FROM CATEGORY", (err, records,fields) => {
@@ -25,23 +31,28 @@ router.get("/AllCategory", (req, res) => {
 });
 
 router.get("/SearchCondition", (req, res) => {
-    const { ORGANIZER,CITY,CATEGORY, ACTIVE } = req.query;
+    const { ORGANIZER, CITY, CATEGORY_ID, ACTIVE } = req.query;
     const params = [];
-    let query = "SELECT * FROM FUNDRAISER WHERE 1=1";
+    let query = `
+        SELECT f.FUNDRAISER_ID, f.ORGANIZER, f.CAPTION, f.TARGET_FUNDING, f.CURRENT_FUNDING, f.CITY, f.ACTIVE, c.NAME as CATEGORY_NAME 
+		FROM FUNDRAISER f
+		JOIN CATEGORY c ON f.CATEGORY_ID = c.CATEGORY_ID
+        WHERE 1=1
+    `;
     if (ORGANIZER) {
-        query += " AND ORGANIZER = ?";  
+        query += " AND f.ORGANIZER = ?";  
         params.push(ORGANIZER); 
     }
     if (CITY) {
-        query += " AND CITY = ?";  
+        query += " AND f.CITY = ?";  
         params.push(CITY); 
     }
-    if (CATEGORY) {
-        query += " AND CATEGORY_ID = ?";
-        params.push(CATEGORY);
+    if (CATEGORY_ID) {
+        query += " AND f.CATEGORY_ID = ?"; 
+        params.push(CATEGORY_ID);
     }
     if (ACTIVE) {
-        query += " AND ACTIVE = ?";
+        query += " AND f.ACTIVE = ?";
         params.push(ACTIVE === '1' ? '1' : '0');
     }
     connection.query(query, params, (err, records) => {
@@ -52,8 +63,17 @@ router.get("/SearchCondition", (req, res) => {
     });
 });
 
+
+
+
 router.get("/SearchFundraiser/:id", (req, res) => {
-    connection.query("SELECT * FROM FUNDRAISER WHERE FUNDRAISER_ID=" + req.params.id, (err, records,fields)=> {
+    const query = `
+        SELECT f.FUNDRAISER_ID, f.ORGANIZER, f.CAPTION, f.TARGET_FUNDING, f.CURRENT_FUNDING, f.CITY, f.ACTIVE, c.NAME as CATEGORY_NAME 
+		FROM FUNDRAISER f
+		JOIN CATEGORY c ON f.CATEGORY_ID = c.CATEGORY_ID
+        WHERE f.FUNDRAISER_ID = 
+    `;
+    connection.query(query + req.params.id, (err, records, fields) => {
         if (err) {
             console.error("Error Getting fundraiser info!", err);
         } else {
@@ -61,5 +81,6 @@ router.get("/SearchFundraiser/:id", (req, res) => {
         }
     });
 });
+
 
 module.exports = router;
