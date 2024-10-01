@@ -53,11 +53,11 @@ router.get("/SearchCondition", (req, res) => {
 });
 
 router.get("/SearchFundraiser/:id", (req, res) => {
-    connection.query("select * from FUNDRAISER where FUNDRAISER_ID=" + req.params.id, (err, records,fields)=> {
+    connection.query("SELECT * FROM FUNDRAISER WHERE FUNDRAISER_ID=" + req.params.id, (err, records,fields)=> {
         if (err) {
             console.error("Error Getting fundraiser info!", err);
         } else {
-            res.send(records[0]);
+            res.send(records);
         }
     });
 });

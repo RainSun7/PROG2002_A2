@@ -153,9 +153,11 @@
                             <p>Active: ${fundraiser.ACTIVE}</p>
                             <p>Category ID: ${fundraiser.CATEGORY_ID}</p>
                         `;
-                        const newP2=document.createElement("p");
-                        newP2.innerHTML="<a href='http://localhost:8080/fundraisers?' onclick='FUNDRAISER_ID("+fundraiser.FUNDRAISER_ID+");'>More</a>";
+                        const newP2 = document.createElement("p");
+                        newP2.innerHTML = `<a href='/Fundraisers?id=${fundraiser.FUNDRAISER_ID}'>More</a>`;
                         dataDiv.appendChild(newP2);
+
+
                   
                         dataDiv.appendChild(boxDiv);
                         
