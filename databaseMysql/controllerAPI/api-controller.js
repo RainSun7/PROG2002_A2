@@ -1,9 +1,12 @@
+// Import the database connection module
 var dbcon = require("../crowdfunding_db");
-var connection = dbcon.getconnection();
-	connection.connect();
+var connection = dbcon.getconnection(); // Get the database connection
+	connection.connect(); // Connect to the database
+// Import the express module and create a router
 var express = require('express');
 var router = express.Router();
 
+// Route to get all active fundraisers
 router.get("/AllFundraiser", (req, res) => {
 	connection.query(`
 		SELECT f.FUNDRAISER_ID, f.ORGANIZER, f.CAPTION, f.TARGET_FUNDING, f.CURRENT_FUNDING, f.CITY, f.ACTIVE, c.NAME as CATEGORY_NAME 
@@ -19,7 +22,7 @@ router.get("/AllFundraiser", (req, res) => {
 	});
 });
 
-
+// Route to get all categories
 router.get("/AllCategory", (req, res) => {
     connection.query("SELECT * FROM CATEGORY", (err, records,fields) => {
         if (err) {
@@ -30,6 +33,7 @@ router.get("/AllCategory", (req, res) => {
     });
 });
 
+// Route to search for fundraisers based on various conditions
 router.get("/SearchCondition", (req, res) => {
     const { ORGANIZER, CITY, CATEGORY_ID, ACTIVE } = req.query;
     const params = [];
@@ -63,9 +67,7 @@ router.get("/SearchCondition", (req, res) => {
     });
 });
 
-
-
-
+// Route to get a specific fundraiser by ID
 router.get("/SearchFundraiser/:id", (req, res) => {
     const query = `
         SELECT f.FUNDRAISER_ID, f.ORGANIZER, f.CAPTION, f.TARGET_FUNDING, f.CURRENT_FUNDING, f.CITY, f.ACTIVE, c.NAME as CATEGORY_NAME 
